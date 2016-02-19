@@ -52,7 +52,7 @@ svg.on("click", function(){
 		  	return "translate("+i*10+",100)";
 	    })
 
-	    currWork.selectAll("circle")
+	   currWork.selectAll("circle")
 	    .data(function(d){
 	    	return d.values;
 	    })
@@ -60,17 +60,24 @@ svg.on("click", function(){
 	    .append("circle")
 	    .attr("class","cw")
 	    .attr("cx",10)
+	    .attr("cy", 0)
+	    .attr("r",5)
+	    .attr("opacity",.5)
+	    .attr("fill",function(d,i){
+	    	// console.log(d)
+	    	return colorScale(d.key);
+	    })	
+	    .attr("stroke",function(d,i){
+	    	// console.log(d)
+	    	return colorScale(d.key);
+	    })
+	    .transition()
+	    .duration(2000)
 	    .attr("cy",function(d,i){
 	    	return 10*i
 	    })
-	    .attr("r",5)
-	    .attr("fill",function(d,i){
-	    	console.log(d)
-	    	return colorScale(d.key);
-	    })	
-	    .attr("stroke","none")
-})
 console.log(data);
+})
 })
 
 
