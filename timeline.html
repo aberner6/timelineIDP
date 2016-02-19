@@ -1,0 +1,106 @@
+<html>  
+<head>  
+<title>Timeline IDP</title>  
+<script type="text/javascript" src="assets/jquery-1.11.3.min.js"></script>
+<script type = "text/javascript" src="assets/d3.min.js"></script>
+</head>
+<body>
+	<div id="container"> 
+	</div>
+
+<script>
+// https://docs.google.com/spreadsheets/d/1fIN5M_g4pS-lzB5dbbeWhsHpwmOd1QfYOMRZNldakSU/edit?usp=sharing
+var entry = [];
+var uniqueEntries;
+var currentStudents = [];
+// var colorScale;
+var colorScale = d3.scale.category10();
+var nested_data = [];
+d3.json("https://spreadsheets.google.com/feeds/list/1fIN5M_g4pS-lzB5dbbeWhsHpwmOd1QfYOMRZNldakSU/od6/public/values?alt=json", function(error, data) {
+    for (j = 0; j < data.feed.entry.length; j++) { 
+        entry.push({
+            "currentStudents": data.feed.entry[j]['gsx$currentstudents']['$t'],
+            "timeIs": data.feed.entry[j]['gsx$month']['$t']
+        })
+        entryDone = true;
+    }
+		nested_data = d3.nest()
+			.key(function(d) { return d.timeIs; })
+			.key(function(d){ return d.currentStudents; })
+			.entries(entry);
+
+for(i=0; i<entry.length; i++){
+	currentStudents.push(entry[i].currentStudents)
+}
+	uniqueEntries = unique(currentStudents)
+
+colorScale
+	.domain([uniqueEntries])
+	// .range(["#96CEB4", "#ADB3FF", "#FFEEAD"])
+    //nest by month
+    //then
+var svg = d3.select("body").append("svg").attr("width",1000).attr("height",700)
+
+
+
+svg.on("click", function(){
+	var currWork = svg.append("g").attr("class","cw")
+	    .selectAll("circle").data(nested_data)
+	    .enter()
+	    .append("g")
+	    .attr("transform", function(d,i){
+		  	return "translate("+i*10+",100)";
+	    })
+
+	    currWork.selectAll("circle")
+	    .data(function(d){
+	    	return d.values;
+	    })
+	    .enter()
+	    .append("circle")
+	    .attr("class","cw")
+	    .attr("cx",10)
+	    .attr("cy",function(d,i){
+	    	return 10*i
+	    })
+	    .attr("r",5)
+	    .attr("fill",function(d,i){
+	    	console.log(d)
+	    	return colorScale(d.key);
+	    })	
+	    .attr("stroke","none")
+})
+console.log(data);
+})
+
+
+function unique(obj) {
+    var uniques = [];
+    var stringify = {};
+    for (var i = 0; i < obj.length; i++) {
+        var keys = Object.keys(obj[i]);
+        keys.sort(function(a, b) {
+            return a - b
+        });
+        var str = '';
+        for (var j = 0; j < keys.length; j++) {
+            str += JSON.stringify(keys[j]);
+            str += JSON.stringify(obj[i][keys[j]]);
+        }
+        if (!stringify.hasOwnProperty(str)) {
+            uniques.push(obj[i]);
+            stringify[str] = true;
+        }
+    }
+    return uniques;
+}
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
