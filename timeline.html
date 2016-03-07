@@ -9,75 +9,25 @@
 	</div>
 
 <script>
-// https://docs.google.com/spreadsheets/d/1fIN5M_g4pS-lzB5dbbeWhsHpwmOd1QfYOMRZNldakSU/edit?usp=sharing
-var entry = [];
-var uniqueEntries;
-var currentStudents = [];
-// var colorScale;
-var colorScale = d3.scale.category10();
-var nested_data = [];
-d3.json("https://spreadsheets.google.com/feeds/list/1fIN5M_g4pS-lzB5dbbeWhsHpwmOd1QfYOMRZNldakSU/od6/public/values?alt=json", function(error, data) {
-    for (j = 0; j < data.feed.entry.length; j++) { 
-        entry.push({
-            "currentStudents": data.feed.entry[j]['gsx$currentstudents']['$t'],
-            "timeIs": data.feed.entry[j]['gsx$month']['$t']
-        })
-        entryDone = true;
-    }
-		nested_data = d3.nest()
-			.key(function(d) { return d.timeIs; })
-			.key(function(d){ return d.currentStudents; })
-			.entries(entry);
-
-for(i=0; i<entry.length; i++){
-	currentStudents.push(entry[i].currentStudents)
-}
-	uniqueEntries = unique(currentStudents)
-
-colorScale
-	.domain([uniqueEntries])
-	// .range(["#96CEB4", "#ADB3FF", "#FFEEAD"])
-    //nest by month
-    //then
-var svg = d3.select("body").append("svg").attr("width",1000).attr("height",700)
-
-
-
-svg.on("click", function(){
-	var currWork = svg.append("g").attr("class","cw")
-	    .selectAll("circle").data(nested_data)
-	    .enter()
-	    .append("g")
-	    .attr("transform", function(d,i){
-		  	return "translate("+i*10+",100)";
-	    })
-
-	   currWork.selectAll("circle")
-	    .data(function(d){
-	    	return d.values;
-	    })
-	    .enter()
-	    .append("circle")
-	    .attr("class","cw")
-	    .attr("cx",10)
-	    .attr("cy", 0)
-	    .attr("r",5)
-	    .attr("opacity",.5)
-	    .attr("fill",function(d,i){
-	    	// console.log(d)
-	    	return colorScale(d.key);
-	    })	
-	    .attr("stroke",function(d,i){
-	    	// console.log(d)
-	    	return colorScale(d.key);
-	    })
-	    .transition()
-	    .duration(2000)
-	    .attr("cy",function(d,i){
-	    	return 10*i
-	    })
-console.log(data);
-})
+var data = [];
+var categories = ["gsx$fridays","gsx$mondays"];
+var names;
+var newnames;
+var onlynames = [];
+// var spreadsheetKey = "1Cw-6RSBFuUPnnPn3WFZva9qRCcCFIFrVQDam1FgyY88";
+d3.json("https://spreadsheets.google.com/feeds/list/1Cw-6RSBFuUPnnPn3WFZva9qRCcCFIFrVQDam1FgyY88/od6/public/values?alt=json", function(error, d) {
+	console.log(d);
+	data.push(d.feed.entry);
+	var obj1 = data[0][0];
+	names = Object.getOwnPropertyNames(obj1);
+	newnames = names.slice(6, names.length);
+	for(i=0; i<newnames.length; i++){
+		onlynames.push(newnames[i].slice(4, newnames[i].length));
+	}
+// data[0][1][categories[0]].$t.length
+	// var category = ["gsx$fridays","gsx$mondays"]
+	// for(i=0; i<)
+ 	// if(data[0][0].category[0].$t
 })
 
 
